@@ -3,3 +3,4 @@ oauth2client
 os
 dotenv
 json
+pyodbc
