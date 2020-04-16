@@ -54,13 +54,29 @@ def make_request_ga(urls, token):
                 for key, url in urls['urls'][name].items():
                     request_result = requests.get(url + token)
                     result_json = request_result.json()
-                    urls['urls'][name][key] = result_json['rows'][0][0]            
+                
+                    if 'rows' in result_json:
+                        if len(result_json['rows']) == 1:
+                            urls['urls'][name][key] = result_json['rows'][0][0]
+                        else:
+                            urls['urls'][name] = json_to_df(result_json, key)                   
+                    else:
+                        urls['urls'][name][key] = '0'
 
             return urls
 
         except Exception as e:
+            print(e)
             writeLog(e).write_log()
 
+def json_to_df(result_json, key_name):
+    object_list_urls = {}
+
+    for idx, items in enumerate(result_json['rows']):
+        for value, head in zip(items, result_json['columnHeaders']):
+            object_list_urls.update({str(idx+1)+'.'+key_name[:key_name.find('.')]+'.'+head['name'].replace('ga:', '')[:3]: value})
+
+    return object_list_urls
 
 def main():
     token = get_access_token()

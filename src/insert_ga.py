@@ -54,7 +54,7 @@ class Connect():
             
         except Exception as e:
             writeLog(e).write_log()
-            print('erro aq')
+            print(e)
 
         finally:
             con.close()
